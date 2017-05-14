@@ -1,5 +1,6 @@
 import _ from 'lodash';
 
+// TODO: add support of virtual parameters with methods {getValue, setValue, save, load}
 
 class Plugin {
   constructor(form, molds) {
@@ -24,7 +25,7 @@ class Plugin {
   }
 
   saveMold() {
-    // TODO: сохранять только выбранные поля
+    // TODO: save only form's fields, not the all
     return Promise.all(_.map(this.molds, (mold) => mold.patch()));
   }
 
@@ -62,25 +63,26 @@ class Plugin {
 
 
   _registerListeners() {
-    // TODO: сделать поддержку более одного mold
-
-    _.each(this.molds, (mold) => {
-      // update mold immediately
-      this.form.onChange((newFormState) => {
+    // update mold immediately
+    this.form.onChange((newFormState) => {
+      _.each(this.molds, (mold) => {
         mold.update(newFormState, {formUpdate: true});
       });
+    });
 
-      // TODO: проверить что происходит дестрой все обработчиков при unmount
+    // TODO: проверить что происходит дестрой все обработчиков при unmount
+    _.each(this.molds, (mold) => {
       mold.onAnyChangeDeep((data) => {
         // skip event from form update
         if (data.data && data.data.formUpdate) return;
-        // TODO: если несклько mold то будет затераться значения
-        this.form.values = mold.mold;
+        this.form.setValues(mold.mold);
       });
     });
+
   }
 
 }
+
 
 export default {
   afterNewFormCreated(form) {

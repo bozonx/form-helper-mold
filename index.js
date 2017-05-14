@@ -1,6 +1,8 @@
 import _ from 'lodash';
 
 // TODO: add support of virtual parameters with methods {getValue, setValue, save, load}
+// TODO: turn off mold handlers on form destroy
+// TODO: add ability to select fields from mold. On save it have to do patch() with allowed fields.
 
 class Plugin {
   constructor(form, molds) {
@@ -25,8 +27,14 @@ class Plugin {
   }
 
   saveMold() {
-    // TODO: save only form's fields, not the all
-    return Promise.all(_.map(this.molds, (mold) => mold.patch()));
+    return Promise.all(_.map(this.molds, (mold) => {
+      const moldFieldNames = this._getFieldsNamesOfMold(mold);
+      // TODO: !!!!! filter fields
+      const allowedFieldNames = moldFieldNames;
+      const dataToSave = _.pick(mold.mold, allowedFieldNames);
+      console.log(33333333333, dataToSave);
+      mold.patch(dataToSave);
+    }));
   }
 
   loadMold() {
@@ -48,10 +56,14 @@ class Plugin {
 
     _.each(this.molds, (item) => {
       if (item.type !== 'document' && item.type !== 'container') throw new Error(`Only document or container mold type are supported!`);
-      names = names.concat(_.keys(item.schema.schema));
+      names = names.concat(this._getFieldsNamesOfMold(item));
     });
 
     return _.uniq(names);
+  }
+
+  _getFieldsNamesOfMold(mold) {
+    return _.keys(mold.schema.schema);
   }
 
 
@@ -70,7 +82,6 @@ class Plugin {
       });
     });
 
-    // TODO: проверить что происходит дестрой все обработчиков при unmount
     _.each(this.molds, (mold) => {
       mold.onAnyChangeDeep((data) => {
         // skip event from form update
@@ -78,7 +89,6 @@ class Plugin {
         this.form.setValues(mold.mold);
       });
     });
-
   }
 
 }

@@ -13,7 +13,7 @@ class Plugin {
       this.molds = [molds];
     }
     else {
-      throw new Error(`Incorrect "molds" type. Allow array or plain object`);
+      throw new Error(`Incorrect "molds" type. Allow only array or plain object`);
     }
 
     this._registerListeners();
@@ -65,7 +65,6 @@ class Plugin {
     // TODO: сделать поддержку более одного mold
 
     _.each(this.molds, (mold) => {
-      // TODO: переместить в react-mold-form
       // update mold immediately
       this.form.onChange((newFormState) => {
         mold.update(newFormState, {formUpdate: true});
@@ -85,7 +84,6 @@ class Plugin {
 
 export default {
   afterNewFormCreated(form) {
-    console.log(2222222222, form)
     const molds = form.getConfig().molds;
     if (_.isEmpty(molds)) return;
     new Plugin(form, molds);

@@ -1,0 +1,27 @@
+{
+  "name": "form-helper-mold",
+  "version": "0.0.1",
+  "description": "Mold connection to form-helper",
+  "private": true,
+  "license": "MIT",
+  "repository": "git@github.com:ipkozyrin/form-helper-mold.git",
+  "engines": {
+    "node": ">=5.11.1"
+  },
+  "author": "Ivan Kozyrin <ipkozyrin@gmail.com>",
+  "scripts": {
+    "install": "yarn link mold && yarn link mold-filldb && yarn link react-form-helper && yarn install --ignore-scripts"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "babel-runtime": "^6.23.0"
+  },
+  "main": "index.js"
+}

@@ -1,9 +1,10 @@
 import _ from 'lodash';
 
 
-class Plugin {
-  constructor(form, molds) {
-    this.form = form;
+class FormHelperMold {
+  constructor(formFactory, molds, formFieldsList) {
+    if (formFieldsList && !_.isArray(formFieldsList)) throw new Error(`Incorrect type of "formFieldsList" param`);
+
     this.molds = null;
 
     if (_.isArray(molds)) {
@@ -16,19 +17,28 @@ class Plugin {
       throw new Error(`Incorrect "molds" type. Allow array or plain object`);
     }
 
+    this.fieldNames = formFieldsList || this._getMoldsFieldNames(this.molds);
+
+    this.form = formFactory();
+    this.form.init(this.fieldNames);
+
     this._registerListeners();
-    this._registerMethods();
 
     // save after debounced event
-    this.form.onSave(() => this.saveMold());
+    this.form.onSave(() => this.save());
+
+    // TODO: сделать по другому
+    this.on = (...a) => this.form.on(...a);
+    this.fields = this.form.fields;
+    this.$getWholeStorageState = (...a) => this.form.$getWholeStorageState(...a);
   }
 
-  saveMold() {
+  save() {
     // TODO: сохранять только выбранные поля
     return Promise.all(_.map(this.molds, (mold) => mold.patch()));
   }
 
-  loadMold() {
+  load() {
     return Promise.all(_.map(this.molds, (mold) => {
       return mold.load().then(() => {
         this.form.values = mold.mold;
@@ -40,26 +50,6 @@ class Plugin {
       });
     }));
   }
-
-
-  getMoldFieldNames() {
-    let names = [];
-
-    _.each(this.molds, (item) => {
-      if (item.type !== 'document' && item.type !== 'container') throw new Error(`Only document or container mold type are supported!`);
-      names = names.concat(_.keys(item.schema.schema));
-    });
-
-    return _.uniq(names);
-  }
-
-
-  _registerMethods() {
-    this.form.saveMold = () => this.saveMold();
-    this.form.loadMold = () => this.loadMold();
-    this.form.getMoldFieldNames = () => this.getMoldFieldNames();
-  }
-
 
   _registerListeners() {
     // TODO: сделать поддержку более одного mold
@@ -81,13 +71,19 @@ class Plugin {
     });
   }
 
+  _getMoldsFieldNames(molds) {
+    let names = [];
+
+    _.each(molds, (item) => {
+      if (item.type !== 'document' && item.type !== 'container') throw new Error(`Only document or container mold type are supported!`);
+      names = names.concat(_.keys(item.schema.schema));
+    });
+
+    return _.uniq(names);
+  }
+
 }
 
-export default {
-  afterNewFormCreated(form) {
-    console.log(2222222222, form)
-    const molds = form.getConfig().molds;
-    if (_.isEmpty(molds)) return;
-    new Plugin(form, molds);
-  }
+export default function(...params) {
+  return new FormHelperMold(...params);
 }

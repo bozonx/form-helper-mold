@@ -4,7 +4,7 @@
   "description": "Mold connection to form-helper",
   "private": true,
   "license": "MIT",
-  "repository": "git@github.com:ipkozyrin/form-helper-mold.git",
+  "repository": "git@github.com:bozonx/form-helper-mold.git",
   "engines": {
     "node": ">=5.11.1"
   },

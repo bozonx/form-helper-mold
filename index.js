@@ -96,7 +96,7 @@ class Plugin {
 
 export default {
   afterNewFormCreated(form) {
-    const molds = form.getConfig().molds;
+    const molds = form.config.molds;
     if (_.isEmpty(molds)) return;
     new Plugin(form, molds);
   }

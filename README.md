@@ -1,4 +1,4 @@
-# Mold connection to form-helper
+# Mold connection to formkit
 
 ## Install
 

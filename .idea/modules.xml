@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/form-helper-mold.iml" filepath="$PROJECT_DIR$/.idea/form-helper-mold.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/formkit-mold.iml" filepath="$PROJECT_DIR$/.idea/formkit-mold.iml" />
     </modules>
   </component>
 </project>

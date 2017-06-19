@@ -40,7 +40,7 @@ class Plugin {
   loadMold() {
     return Promise.all(_.map(this.molds, (mold) => {
       return mold.load().then(() => {
-        this.form.values = mold.mold;
+        this.form.setValues(mold.mold);
       }, (err) => {
         // put data for first time
         if (err.driverError.status == 404) {
